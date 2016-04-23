@@ -7,9 +7,6 @@
 //
 
 #include "Partical.hpp"
-#include "Object.hpp"
-#include <OpenGL/OpenGL.h>
-#include <GLUT/GLUT.h>
 
 Partical::Partical(float x, float y, float z, float edgeLength, int tessEdge){
     origin = Point(x, y, z);

@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include "Object.hpp"
 #include "Algebra.h"
-#include <OpenGL/OpenGL.h>
+#include "includeGL.hpp"
 
 class Partical : Object {
   

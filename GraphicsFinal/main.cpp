@@ -8,7 +8,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <GLUI/glui.h>
+//#include <GLUI/glui.h>
+#include <GL/glui.h>
 #include "Camera.h"
 #include <iostream>
 #include "Object.hpp"

@@ -7,9 +7,6 @@
 //
 
 #include "ParticalRound.hpp"
-#include "Object.hpp"
-#include <OpenGL/OpenGL.h>
-#include <GLUT/GLUT.h>
 
 ParticalRound::ParticalRound(float x, float y, float z, float radius, int tessEdge){
     origin = Point(x, y, z);

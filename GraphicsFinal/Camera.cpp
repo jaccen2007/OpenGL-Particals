@@ -1,7 +1,5 @@
 
 #include "Camera.h"
-#include <GLUT/GLUT.h>
-#include <OpenGL/OpenGL.h>
 
 Camera::Camera() {
 }
