@@ -7,7 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BAC1B3741CC97141007E6BE1 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAC1B3731CC97141007E6BE1 /* main.cpp */; };
+		BAC1B37D1CC97161007E6BE1 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BAC1B37A1CC97161007E6BE1 /* GLKit.framework */; };
+		BAC1B37E1CC97161007E6BE1 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BAC1B37B1CC97161007E6BE1 /* GLUT.framework */; };
+		BAC1B37F1CC97161007E6BE1 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BAC1B37C1CC97161007E6BE1 /* OpenGL.framework */; };
+		BAC1B3811CC97188007E6BE1 /* GLUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BAC1B3801CC97188007E6BE1 /* GLUI.framework */; };
+		BAC1B3881CC97B6C007E6BE1 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAC1B3871CC97B6C007E6BE1 /* main.cpp */; };
+		BAC1B38C1CC980C5007E6BE1 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAC1B38A1CC980C5007E6BE1 /* Camera.cpp */; };
+		BAC1B3971CC9BD42007E6BE1 /* Partical.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAC1B3951CC9BD42007E6BE1 /* Partical.cpp */; };
+		BAC1B39A1CC9D850007E6BE1 /* ParticalRound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAC1B3981CC9D850007E6BE1 /* ParticalRound.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +31,19 @@
 
 /* Begin PBXFileReference section */
 		BAC1B3701CC97141007E6BE1 /* GraphicsFinal */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = GraphicsFinal; sourceTree = BUILT_PRODUCTS_DIR; };
-		BAC1B3731CC97141007E6BE1 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		BAC1B37A1CC97161007E6BE1 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		BAC1B37B1CC97161007E6BE1 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
+		BAC1B37C1CC97161007E6BE1 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		BAC1B3801CC97188007E6BE1 /* GLUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUI.framework; path = ../../../../../Library/Frameworks/GLUI.framework; sourceTree = "<group>"; };
+		BAC1B3871CC97B6C007E6BE1 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		BAC1B3891CC980C5007E6BE1 /* Algebra.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Algebra.h; sourceTree = "<group>"; };
+		BAC1B38A1CC980C5007E6BE1 /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
+		BAC1B38B1CC980C5007E6BE1 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Camera.h; sourceTree = "<group>"; };
+		BAC1B3931CC9BC91007E6BE1 /* Object.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Object.hpp; sourceTree = "<group>"; };
+		BAC1B3951CC9BD42007E6BE1 /* Partical.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Partical.cpp; sourceTree = "<group>"; };
+		BAC1B3961CC9BD42007E6BE1 /* Partical.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Partical.hpp; sourceTree = "<group>"; };
+		BAC1B3981CC9D850007E6BE1 /* ParticalRound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParticalRound.cpp; sourceTree = "<group>"; };
+		BAC1B3991CC9D850007E6BE1 /* ParticalRound.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ParticalRound.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +51,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BAC1B3811CC97188007E6BE1 /* GLUI.framework in Frameworks */,
+				BAC1B37D1CC97161007E6BE1 /* GLKit.framework in Frameworks */,
+				BAC1B37E1CC97161007E6BE1 /* GLUT.framework in Frameworks */,
+				BAC1B37F1CC97161007E6BE1 /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -41,6 +64,10 @@
 		BAC1B3671CC97141007E6BE1 = {
 			isa = PBXGroup;
 			children = (
+				BAC1B3801CC97188007E6BE1 /* GLUI.framework */,
+				BAC1B37A1CC97161007E6BE1 /* GLKit.framework */,
+				BAC1B37B1CC97161007E6BE1 /* GLUT.framework */,
+				BAC1B37C1CC97161007E6BE1 /* OpenGL.framework */,
 				BAC1B3721CC97141007E6BE1 /* GraphicsFinal */,
 				BAC1B3711CC97141007E6BE1 /* Products */,
 			);
@@ -57,7 +84,15 @@
 		BAC1B3721CC97141007E6BE1 /* GraphicsFinal */ = {
 			isa = PBXGroup;
 			children = (
-				BAC1B3731CC97141007E6BE1 /* main.cpp */,
+				BAC1B3871CC97B6C007E6BE1 /* main.cpp */,
+				BAC1B3891CC980C5007E6BE1 /* Algebra.h */,
+				BAC1B38A1CC980C5007E6BE1 /* Camera.cpp */,
+				BAC1B38B1CC980C5007E6BE1 /* Camera.h */,
+				BAC1B3931CC9BC91007E6BE1 /* Object.hpp */,
+				BAC1B3981CC9D850007E6BE1 /* ParticalRound.cpp */,
+				BAC1B3991CC9D850007E6BE1 /* ParticalRound.hpp */,
+				BAC1B3951CC9BD42007E6BE1 /* Partical.cpp */,
+				BAC1B3961CC9BD42007E6BE1 /* Partical.hpp */,
 			);
 			path = GraphicsFinal;
 			sourceTree = "<group>";
@@ -118,7 +153,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BAC1B3741CC97141007E6BE1 /* main.cpp in Sources */,
+				BAC1B38C1CC980C5007E6BE1 /* Camera.cpp in Sources */,
+				BAC1B3971CC9BD42007E6BE1 /* Partical.cpp in Sources */,
+				BAC1B39A1CC9D850007E6BE1 /* ParticalRound.cpp in Sources */,
+				BAC1B3881CC97B6C007E6BE1 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -209,6 +247,10 @@
 		BAC1B3781CC97141007E6BE1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -216,6 +258,10 @@
 		BAC1B3791CC97141007E6BE1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -239,6 +285,7 @@
 				BAC1B3791CC97141007E6BE1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
