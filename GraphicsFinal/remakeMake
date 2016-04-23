@@ -1,0 +1,24 @@
+#!/bin/bash
+getOs(){
+    echo $(g++ -MM $(find .|grep .cpp$) | grep -E "^[^:]*:"|sed 's/\(^[^:]*\):.*/\1/g')
+}
+echo "CXXFLAGS=-std=c++11 -g" > Makefile
+echo "LDFLAGS=-lglui -lglut -lGL -lGLU" >> Makefile
+echo "oDir=oFiles/" >> Makefile
+echo "oFiles=$(getOs)" >> Makefile
+echo 'all: $(oDir)' >> Makefile
+printf "\tmake --no-print-directory unclear\n" >>Makefile
+printf "\tmake --no-print-directory comp\n">>Makefile
+printf "\tmake --no-print-directory clear\n">>Makefile
+echo '$(oDir):'>>Makefile
+printf "\tmkdir "'$(oDir)'"\n">>Makefile
+echo 'comp: $(oFiles)' >> Makefile
+printf "\tg++ -o Prog "'$(oFiles) $(LDFLAGS)'"\n" >> Makefile
+g++ -MM $(find .|grep .cpp$ ) >> Makefile
+echo "unclear:">> Makefile
+printf "\t"'@if ! mv $(oDir)*.o .; then printf "";fi'"\n">> Makefile
+echo "clear:">> Makefile
+printf "\t"'@if ! mv *.o $(oDir); then printf "";fi'"\n">> Makefile
+echo "clean:">> Makefile
+printf "\t"'rm *.o ;rm $(oDir)*.o'"\n">> Makefile
+exit 0;
