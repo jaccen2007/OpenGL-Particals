@@ -8,8 +8,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-//#include <GLUI/glui.h>
-#include <GL/glui.h>
+
+#ifdef __APPLE__
+    #include <GLUI/glui.h>
+#else
+    #include <GL/glui.h>
+#endif
+
 #include "Camera.h"
 #include <iostream>
 #include "Object.hpp"
