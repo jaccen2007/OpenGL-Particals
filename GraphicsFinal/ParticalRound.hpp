@@ -14,7 +14,7 @@
 #include "Algebra.h"
 #include "includeGL.hpp"
 
-class ParticalRound : Object {
+class ParticalRound :public Object {
     
     constexpr static const float STANDARD_RADIUS = 0.03;
     static const int MIN_TESS_EDGE = 5;
@@ -25,8 +25,6 @@ public:
     
     void draw();
     
-    void setOrigin(Point p);
-    Point getOrigin();
     void setColor(Point p);
     Point getColor();
     void setRadius(float r);
@@ -34,7 +32,6 @@ public:
     
 private:
     
-    Point origin;
     Point color;
     float radius;
     int tessEdge;

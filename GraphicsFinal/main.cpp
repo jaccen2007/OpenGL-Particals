@@ -15,12 +15,14 @@
 #include "Object.hpp"
 #include "Partical.hpp"
 #include "ParticalRound.hpp"
+#include "Kinematics.hpp"
 #include <vector>
 
 const float CAMERA_MOVE_INC = 0.2;
 const float CAMERA_ZOOM_FACTOR = 1.5;
 const float CAMERA_ROTATE_FACTOR = 2;
-const int NUM_OF_PARTICALS = 300;
+//const int NUM_OF_PARTICALS = 300;
+const int NUM_OF_PARTICALS = 50;
 
 bool showGrid = true;
 bool debugMode = true;
@@ -284,6 +286,9 @@ void myKeyboardFunc(unsigned char key, int x, int y){
 }
 
 void onExit(void){
+    for(int i=0;i<NUM_OF_PARTICALS;i++){
+        delete particals[i];
+    }
     
 }
 

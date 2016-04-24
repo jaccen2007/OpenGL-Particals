@@ -64,13 +64,6 @@ float ParticalRound::getRadius(){
     return radius;
 }
 
-void ParticalRound::setOrigin(Point p){
-    this->origin = p;
-}
-
-Point ParticalRound::getOrigin(){
-    return origin;
-}
 
 void ParticalRound::setColor(Point p){
     this->color = p;

@@ -1,7 +1,7 @@
 CXXFLAGS=-std=c++11 -g
 LDFLAGS=-lglui -lglut -lGL -lGLU
 oDir=oFiles/
-oFiles=ParticalRound.o main.o Partical.o Camera.o
+oFiles=Object.o Kinematics.o ParticalRound.o main.o Partical.o Camera.o
 all: $(oDir)
 	make --no-print-directory unclear
 	make --no-print-directory comp
@@ -9,11 +9,13 @@ all: $(oDir)
 $(oDir):
 	mkdir $(oDir)
 comp: $(oFiles)
-	g++ -o prog $(oFiles) $(LDFLAGS)
+	g++ -o Prog $(oFiles) $(LDFLAGS)
+Object.o: Object.cpp Object.hpp Algebra.h
+Kinematics.o: Kinematics.cpp Kinematics.hpp Algebra.h Object.hpp
 ParticalRound.o: ParticalRound.cpp ParticalRound.hpp Object.hpp Algebra.h \
  includeGL.hpp
 main.o: main.cpp Camera.h Algebra.h Object.hpp Partical.hpp includeGL.hpp \
- ParticalRound.hpp
+ ParticalRound.hpp Kinematics.hpp
 Partical.o: Partical.cpp Partical.hpp Object.hpp Algebra.h includeGL.hpp
 Camera.o: Camera.cpp Camera.h Algebra.h
 unclear:

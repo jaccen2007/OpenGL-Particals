@@ -61,14 +61,6 @@ void Partical::draw(){
 }
 
 
-void Partical::setOrigin(Point p){
-    this->origin = p;
-}
-
-Point Partical::getOrigin(){
-    return origin;
-}
-
 void Partical::setColor(Point p){
     this->color = p;
 }

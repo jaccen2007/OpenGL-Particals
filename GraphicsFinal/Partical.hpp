@@ -14,7 +14,7 @@
 #include "Algebra.h"
 #include "includeGL.hpp"
 
-class Partical : Object {
+class Partical :public Object {
   
     constexpr static const float STANDARD_EDGE = 0.03;
     static const int MIN_TESS_EDGE = 1;
@@ -24,14 +24,11 @@ public:
     ~Partical();
     
     void draw();
-    void setOrigin(Point p);
-    Point getOrigin();
     void setColor(Point p);
     Point getColor();
     
 private:
     
-    Point origin;
     Point color;
     float edgeLength;
     int tessEdge;
