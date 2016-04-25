@@ -13,10 +13,10 @@
 #include "Object.hpp"
 #include "Algebra.h"
 #include "includeGL.hpp"
+static const float STANDARD_EDGE = 0.03;
 
 class Partical :public Object {
   
-    constexpr static const float STANDARD_EDGE = 0.03;
     static const int MIN_TESS_EDGE = 1;
     
 public:

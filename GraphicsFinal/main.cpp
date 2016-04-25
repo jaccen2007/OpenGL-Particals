@@ -21,13 +21,17 @@
 #include "Partical.hpp"
 #include "ParticalRound.hpp"
 #include "Physics.hpp"
+#include "Bezier.hpp"
 #include <vector>
 
 const float CAMERA_MOVE_INC = 0.2;
 const float CAMERA_ZOOM_FACTOR = 1.5;
 const float CAMERA_ROTATE_FACTOR = 2;
 const int NUM_OF_PARTICALS = 300;
+//const int NUM_OF_PARTICALS = 1;
 std::vector<Vector> vectors;
+
+const BezierCalc RedColorChange(Point(1,1,1),Point(1,.8,0),Point(1,.2,0),Point(.5,0,0));
 
 bool showGrid = true;
 bool debugMode = true;
@@ -90,10 +94,18 @@ Point randColor(){
 }
 
 void initVector(int i){
+    /*
+    physics.setGravity(Vector(0,0,0));
+    physics.setWind(Vector(0,0,0));
+    particalsVec[i]->setLaunchVelocity(0);
+    particalsVec[i]->setRadius(1);
+    /*/
+    physics.setWind(Vector(7,0,-4));
     particalsVec[i]->setColor(randColor());
     particalsVec[i]->setLaunchVector(Vector(((rand()%200)-100)/50.0,((rand()%100))/50.0,((rand()%200)-100)/50.0));
     //particalsVec[i]->setLaunchVector(Physics::getRandomVector(Vector(1,1,1),30));
     particalsVec[i]->setLaunchVelocity((rand()%1000)/200.0);
+    //*/
 }
 
 void myGlutDisplay(void){
@@ -155,8 +167,7 @@ void myGlutDisplay(void){
         glLineWidth(1);
         glEnable(GL_LIGHTING);
     }
-    physics.setWind(Vector(7,0,-4));
-    /*
+    /* in init vector test launch vector generation
     glBegin(GL_LINES);
     for(int i=0;i<vectors.size();i++){
         glVertex3d(0,0,0);
@@ -164,11 +175,12 @@ void myGlutDisplay(void){
     }
     glEnd();
     /*/
+    static int MAX_FRAMES=500;
     static float speed = 1.15;
-    static float shrink = 0.00015;
+    static float shrink = 0.000015;
     static float frameTimeStep= 0.003;//replace with chronos lib if lab comps support c++11
     frameCount++;
-    if(frameCount%500 ==0){
+    if(frameCount%MAX_FRAMES==0){
         for(int i=0;i<NUM_OF_PARTICALS;i++){
             if(particalsVec[i]){
                 delete particalsVec[i];
@@ -185,12 +197,15 @@ void myGlutDisplay(void){
         if(particalsVec[i]->getRadius()>0){
            particalsVec[i]->draw();
         }
+        //*
         particalsVec[i]->updateTimeAlive(frameTimeStep);
         Point p=physics.calculateOrigin(particalsVec[i]);
         particalsVec[i]->setOrigin((p+Point(0,2,0)));
         if(frameCount>100){
             particalsVec[i]->setRadius(particalsVec[i]->getRadius()-shrink);
         }
+        //*/
+        particalsVec[i]->setColor(RedColorChange.getColor(double(frameCount)/double(MAX_FRAMES)));
     }
     //*/
     glutSwapBuffers();

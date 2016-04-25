@@ -21,7 +21,11 @@ ParticalRound::~ParticalRound(){
 }
 
 void ParticalRound::draw(){
-    
+    glColor3f(color[0], color[1], color[2]);
+    glTranslatef(origin[0],origin[1],origin[2]);
+    glutSolidSphere(radius*4,20,20);
+    glTranslatef(-origin[0],-origin[1],-origin[2]);
+    /*
     Point tl, bl;
     for (float y = 0; y < tessEdge; y++) {
         
@@ -52,6 +56,7 @@ void ParticalRound::draw(){
         }
         glEnd();
     }
+    */
     
 }
 

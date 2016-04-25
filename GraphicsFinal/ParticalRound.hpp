@@ -14,9 +14,9 @@
 #include "Algebra.h"
 #include "includeGL.hpp"
 
+static const float STANDARD_RADIUS = 0.03;
 class ParticalRound :public Object {
     
-    constexpr static const float STANDARD_RADIUS = 0.03;
     static const int MIN_TESS_EDGE = 5;
     
 public:
