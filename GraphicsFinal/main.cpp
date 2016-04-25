@@ -20,7 +20,7 @@
 #include "Object.hpp"
 #include "Partical.hpp"
 #include "ParticalRound.hpp"
-#include "Kinematics.hpp"
+#include "Physics.hpp"
 #include <vector>
 
 const float CAMERA_MOVE_INC = 0.2;
@@ -49,7 +49,7 @@ std::ostream& operator<<(std::ostream& os,Point& p){
     return os;
 }
 
-KinematicsCalculator kCalc(Vector(0,0,0));
+Physics physics(Vector(7,2,0));
 
 int main_window;
 Camera* camera = new Camera();
@@ -158,7 +158,7 @@ void myGlutDisplay(void){
             particalsVec[i]=new ParticalRound();
             particalsVec[i]->setColor(randColor());
             particalsVec[i]->setLaunchVector(Vector(((rand()%200)-100)/50.0,((rand()%100))/50.0,((rand()%200)-100)/50.0));
-            particalsVec[i]->setLaunchVelocity((rand()%1000)/100.0);
+            particalsVec[i]->setLaunchVelocity((rand()%1000)/200.0);
         }
         speed = 1.15;
         frameCount = 1;
@@ -170,8 +170,11 @@ void myGlutDisplay(void){
            particalsVec[i]->draw();
         }
         particalsVec[i]->updateTimeAlive(frameTimeStep);
-        Point p=kCalc.calculateOrigin(particalsVec[i]);
+        Point p=physics.calculateOrigin(particalsVec[i]);
         particalsVec[i]->setOrigin(p);
+        if(frameCount>100){
+            particalsVec[i]->setRadius(particalsVec[i]->getRadius()-shrink);
+        }
     }
     
     glutSwapBuffers();
