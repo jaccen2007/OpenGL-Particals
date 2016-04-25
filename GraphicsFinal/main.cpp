@@ -23,6 +23,8 @@
 #include "Physics.hpp"
 #include "Bezier.hpp"
 #include <vector>
+#include <cstdlib>
+#include <ctime>
 
 const float CAMERA_MOVE_INC = 0.2;
 const float CAMERA_ZOOM_FACTOR = 1.5;
@@ -194,13 +196,13 @@ void myGlutDisplay(void){
     }
 
     for(int i=0;i<NUM_OF_PARTICALS;i++){
-        if(particalsVec[i]->getRadius()>0){
+        if(particalsVec[i]->getRadius()>0&&particalsVec[i]->getOrigin()[1]>0){
            particalsVec[i]->draw();
         }
         //*
         particalsVec[i]->updateTimeAlive(frameTimeStep);
         Point p=physics.calculateOrigin(particalsVec[i]);
-        particalsVec[i]->setOrigin((p+Point(0,2,0)));
+        particalsVec[i]->setOrigin((p+Point(0,3,0)));
         if(frameCount>100){
             particalsVec[i]->setRadius(particalsVec[i]->getRadius()-shrink);
         }

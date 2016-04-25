@@ -50,11 +50,11 @@ Matrix Camera::GetOrthographicProjection(){
     
     double x = 2.0/(right-left);
     double y = 2.0/(top-bottom);
-    double z = -2.0/(far-near);
+    double z = -2.0/(Far-Near);
     
     double sx = -((right+left)/(right-left));
     double sy = -((top+bottom)/(top-bottom));
-    double sz = -((far+near)/(far-near));
+    double sz = -((Far+Near)/(Far-Near));
     
     Matrix M(x, 0, 0, sx,
              0, y, 0, sy,
@@ -65,7 +65,7 @@ Matrix Camera::GetOrthographicProjection(){
 }
 
 Matrix Camera::GetProjectionMatrix() {
-    double c = -near / far;
+    double c = -Near / Far;
     double a = -1.0/(c+1.0);
     double b = c/(c+1.0);
     
@@ -76,9 +76,9 @@ Matrix Camera::GetProjectionMatrix() {
     
     
     
-    double sx = 1.0/(tan(DEG_TO_RAD(view*width/height/2))*far);
-    double sy = 1.0/(tan(DEG_TO_RAD(view/2))*far);
-    double sz = 1.0/far;
+    double sx = 1.0/(tan(DEG_TO_RAD(view*width/height/2))*Far);
+    double sy = 1.0/(tan(DEG_TO_RAD(view/2))*Far);
+    double sz = 1.0/Far;
     
     Matrix S = Matrix(sx,  0,  0,  0,
                        0, sy,  0,  0,
@@ -92,11 +92,11 @@ void Camera::SetViewAngle (double viewAngle) {
 }
 
 void Camera::SetNearPlane (double nearPlane) {
-    near = nearPlane;
+    Near = nearPlane;
 }
 
 void Camera::SetFarPlane (double farPlane) {
-    far = farPlane;
+    Far = farPlane;
 }
 
 void Camera::SetScreenSize (int screenWidth, int screenHeight) {
@@ -174,11 +174,11 @@ double Camera::GetViewAngle() {
 }
 
 double Camera::GetNearPlane() {
-	return near;
+	return Near;
 }
 
 double Camera::GetFarPlane() {
-	return far;
+	return Far;
 }
 
 int Camera::GetScreenWidth() {
@@ -190,7 +190,7 @@ int Camera::GetScreenHeight() {
 }
 
 double Camera::GetFilmPlanDepth() {
-	return far-near;
+	return Far-Near;
 }
 
 double Camera::GetScreenWidthRatio() {

@@ -42,7 +42,7 @@ public:
 private:
     Point eye;
     Vector look, up, u, v, w;
-    double view, near, far;
+    double view, Near, Far;
     int width, height;
 };
 #endif
