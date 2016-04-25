@@ -24,12 +24,9 @@ public:
     ~Partical();
     
     void draw();
-    void setColor(Point p);
-    Point getColor();
     
 private:
     
-    Point color;
     float edgeLength;
     int tessEdge;
     

@@ -55,20 +55,3 @@ void ParticalRound::draw(){
     
 }
 
-void ParticalRound::setRadius(float r){
-    if(r < 0) r = 0;
-    this->radius = r;
-}
-
-float ParticalRound::getRadius(){
-    return radius;
-}
-
-
-void ParticalRound::setColor(Point p){
-    this->color = p;
-}
-
-Point ParticalRound::getColor(){
-    return color;
-}

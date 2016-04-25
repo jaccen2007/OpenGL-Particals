@@ -61,13 +61,6 @@ void Partical::draw(){
 }
 
 
-void Partical::setColor(Point p){
-    this->color = p;
-}
-
-Point Partical::getColor(){
-    return color;
-}
 
 
 

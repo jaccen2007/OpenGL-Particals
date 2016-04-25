@@ -23,12 +23,20 @@ public:
     void setOrigin(Point& p);
     void resetTime();
     double getTimeAlive();
-    void updateTimeAlive(double time);
+    void updateTimeAlive(double timeToAdd);
     Vector getLuanchVector();
     void setLaunchVector(const Vector& v);
     double getLuanchVelocity();
     void setLaunchVelocity(double v);
+
+    void setColor(Point p);
+    Point getColor();
+    void setRadius(float r);
+    float getRadius();
 protected:
+    float radius;
+    Point color;
+
     Point origin;
     double timeAlive;//zero at start
     Vector launchVector;

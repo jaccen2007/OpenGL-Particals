@@ -1,8 +1,31 @@
 
 #include "Object.hpp"
 
-    Object::Object() {timeAlive=0;};
+    Object::Object() {
+        timeAlive=0;
+        launchVector=Vector(1,1,1);
+        launchVector.normalize();
+        launchVelocity=5;//adjust as needed
+    };
     
+    void Object::setRadius(float r){
+        if(r < 0) r = 0;
+        this->radius = r;
+    }
+
+    float Object::getRadius(){
+        return radius;
+    }
+
+
+    void Object::setColor(Point p){
+        this->color = p;
+    }
+
+    Point Object::getColor(){
+        return color;
+    }
+
     Point Object::getOrigin(){
         return origin;
     }
@@ -16,8 +39,8 @@
         return timeAlive;
     }
     void Object::updateTimeAlive(double time){
-        if(time>timeAlive){
-            timeAlive=time;
+        if(time>0){
+            timeAlive+=time;
         }
     }
     Vector Object::getLuanchVector(){
@@ -25,6 +48,7 @@
     }
     void Object::setLaunchVector(const Vector& v){
         launchVector=v;
+        launchVector.normalize();
     }
     double Object::getLuanchVelocity(){
         return launchVelocity;

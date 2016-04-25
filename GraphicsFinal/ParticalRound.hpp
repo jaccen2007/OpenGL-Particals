@@ -25,15 +25,8 @@ public:
     
     void draw();
     
-    void setColor(Point p);
-    Point getColor();
-    void setRadius(float r);
-    float getRadius();
     
 private:
-    
-    Point color;
-    float radius;
     int tessEdge;
     
 };

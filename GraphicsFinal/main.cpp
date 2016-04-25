@@ -26,8 +26,7 @@
 const float CAMERA_MOVE_INC = 0.2;
 const float CAMERA_ZOOM_FACTOR = 1.5;
 const float CAMERA_ROTATE_FACTOR = 2;
-//const int NUM_OF_PARTICALS = 300;
-const int NUM_OF_PARTICALS = 50;
+const int NUM_OF_PARTICALS = 300;
 
 bool showGrid = true;
 bool debugMode = true;
@@ -45,11 +44,16 @@ float lookY = 0;
 float lookZ = -1;
 float clipNear = 0.001;
 float clipFar = 30;
+std::ostream& operator<<(std::ostream& os,Point& p){
+    os<<"{"<<p[0]<<","<<p[1]<<","<<p[2]<<"}";
+    return os;
+}
+
+KinematicsCalculator kCalc(Vector(0,0,0));
 
 int main_window;
 Camera* camera = new Camera();
-ParticalRound *particals[NUM_OF_PARTICALS];
-std::vector<ParticalRound> additionalParticals;
+std::vector<ParticalRound*> particalsVec;
 
 void myGlutIdle(void);
 void myGlutDisplay(void);
@@ -75,7 +79,14 @@ void myGlutIdle(void){
     if(glutGetWindow() != main_window) glutSetWindow(main_window);
     glutPostRedisplay();
 }
-
+Point randColor(){
+    int randVal=rand()%7;//all combinations of three 0's or 1's
+    //except 111, white doesn't show well
+    char midMask=3;//010
+                       //get each bit, 0 or 1
+    Point toReturn(randVal>>2,(randVal&midMask)>>1,(randVal&1));
+    return toReturn;
+}
 void myGlutDisplay(void){
     static long frameCount = 1;
     
@@ -117,53 +128,6 @@ void myGlutDisplay(void){
     camera->RotateU(-camRotU);
     camera->RotateW(-camRotW);
     
-    
-    static float speed = 1.15;
-    static float shrink = 0.00015;
-    
-    if(frameCount < 10){
-        speed -= 0.0025;
-    }
-    if(frameCount < 30){
-        speed -= 0.002;
-    }
-    if(frameCount > 40){
-        speed -= 0.01;
-    }
-    
-    
-    if(speed < 1.001) speed = 1.001;
-    
-    for(int i=0; i<NUM_OF_PARTICALS; i++){
-        Point o = particals[i]->getOrigin()*speed;
-        if(frameCount > 60){
-            o[1] -= 0.005;
-        }else{
-            ParticalRound pp(o[0], o[1], o[2]);
-            pp.setColor(particals[i]->getColor());
-            additionalParticals.push_back(pp);
-        }
-        particals[i]->setOrigin(o);
-        particals[i]->setRadius(particals[i]->getRadius()-shrink);
-        
-        Point c = particals[i]->getColor();
-        c[0] -= 0.09;
-        c[1] -= 0.09;
-        c[2] -= 0.09;
-        
-        particals[i]->setColor(c);
-        particals[i]->draw();
-    }
-    
-    for(int i=0; i<additionalParticals.size(); i++){
-        additionalParticals[i].setRadius(additionalParticals[i].getRadius()-(shrink*10));
-        if(additionalParticals[i].getRadius() > 0){
-            additionalParticals[i].draw();
-        }
-
-    }
-    
-    
     if(debugMode){
         //TODO: fix text display
         //displayText( 50,50, 255,0,0, "debug" );
@@ -182,35 +146,33 @@ void myGlutDisplay(void){
         glLineWidth(1);
         glEnable(GL_LIGHTING);
     }
-    
+    static float speed = 1.15;
+    static float shrink = 0.00015;
+    static float frameTimeStep= 0.003;//replace with chronos lib if lab comps support c++11
     frameCount++;
-    if(frameCount%200 ==0){
+    if(frameCount%500 ==0){
+        for(int i=0;i<NUM_OF_PARTICALS;i++){
+            if(particalsVec[i]){
+                delete particalsVec[i];
+            }
+            particalsVec[i]=new ParticalRound();
+            particalsVec[i]->setColor(randColor());
+            particalsVec[i]->setLaunchVector(Vector(((rand()%200)-100)/50.0,((rand()%100))/50.0,((rand()%200)-100)/50.0));
+            particalsVec[i]->setLaunchVelocity((rand()%1000)/100.0);
+        }
         speed = 1.15;
         frameCount = 1;
-        Point cc(Point( ((double)rand()/(RAND_MAX))*10.0, ( (double)rand()/(RAND_MAX) )*10.0, ((double) rand() / (RAND_MAX))*10.0));
-        
-        int tries = 0;
-        for(int i=0; i<NUM_OF_PARTICALS; i++){
-            Point oo((((double) rand() / (RAND_MAX)) -0.5)/10.0, ((((double) rand() / (RAND_MAX)) -0.5)/10.0), ((((double) rand() / (RAND_MAX)) -0.5)/10.0));
-            
-            if((oo[0]*oo[0] + oo[1]*oo[1] + oo[2]*oo[2]) < particals[0]->getRadius()*particals[0]->getRadius()){
-                particals[i] = new ParticalRound(oo[0], oo[1], oo[2]);
-                particals[i]->setColor(cc);
-            }else{
-                if(tries++ < 70){
-                    i--;
-                }else{
-                    particals[i] = new ParticalRound(oo[0], oo[1], oo[2]);
-                    particals[i]->setColor(cc);
-                    tries = 0;
-                }
-            }
-            
-        }
-        additionalParticals.erase(additionalParticals.begin(), additionalParticals.end());
+
     }
-    
-    //std::cout << additionalParticals.size() << std::endl;
+
+    for(int i=0;i<NUM_OF_PARTICALS;i++){
+        if(particalsVec[i]->getRadius()>0){
+           particalsVec[i]->draw();
+        }
+        particalsVec[i]->updateTimeAlive(frameTimeStep);
+        Point p=kCalc.calculateOrigin(particalsVec[i]);
+        particalsVec[i]->setOrigin(p);
+    }
     
     glutSwapBuffers();
     glutPostRedisplay();
@@ -292,7 +254,9 @@ void myKeyboardFunc(unsigned char key, int x, int y){
 
 void onExit(void){
     for(int i=0;i<NUM_OF_PARTICALS;i++){
-        delete particals[i];
+        if(particalsVec[i]){
+            delete particalsVec[i];
+        }
     }
     
 }
@@ -368,20 +332,8 @@ int main(int argc, char* argv[]){
     
     
     srand (time(NULL));
-    particals[0] =  new ParticalRound();
     for(int i=0; i<NUM_OF_PARTICALS; i++){
-        
-        Point oo((((double) rand() / (RAND_MAX)) -0.5)/10.0, ((((double) rand() / (RAND_MAX)) -0.5)/10.0), ((((double) rand() / (RAND_MAX)) -0.5)/10.0));
-        
-        if((oo[0]*oo[0] + oo[1]*oo[1] + oo[2]*oo[2]) < particals[0]->getRadius()*particals[0]->getRadius()){
-            particals[i] = new ParticalRound(oo[0], oo[1], oo[2]);
-            particals[i]->setColor(Point(10,0,0));
-        }else{
-            i--;
-        }
-        
-        
-        
+        particalsVec.push_back(new ParticalRound());
     }
     
     
