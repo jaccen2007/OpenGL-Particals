@@ -27,6 +27,7 @@ const float CAMERA_MOVE_INC = 0.2;
 const float CAMERA_ZOOM_FACTOR = 1.5;
 const float CAMERA_ROTATE_FACTOR = 2;
 const int NUM_OF_PARTICALS = 300;
+std::vector<Vector> vectors;
 
 bool showGrid = true;
 bool debugMode = true;
@@ -87,6 +88,14 @@ Point randColor(){
     Point toReturn(randVal>>2,(randVal&midMask)>>1,(randVal&1));
     return toReturn;
 }
+
+void initVector(int i){
+    particalsVec[i]->setColor(randColor());
+    particalsVec[i]->setLaunchVector(Vector(((rand()%200)-100)/50.0,((rand()%100))/50.0,((rand()%200)-100)/50.0));
+    //particalsVec[i]->setLaunchVector(Physics::getRandomVector(Vector(1,1,1),30));
+    particalsVec[i]->setLaunchVelocity((rand()%1000)/200.0);
+}
+
 void myGlutDisplay(void){
     static long frameCount = 1;
     
@@ -146,6 +155,15 @@ void myGlutDisplay(void){
         glLineWidth(1);
         glEnable(GL_LIGHTING);
     }
+    physics.setWind(Vector(7,0,-4));
+    /*
+    glBegin(GL_LINES);
+    for(int i=0;i<vectors.size();i++){
+        glVertex3d(0,0,0);
+        glVertex3dv(vectors[i].unpack());
+    }
+    glEnd();
+    /*/
     static float speed = 1.15;
     static float shrink = 0.00015;
     static float frameTimeStep= 0.003;//replace with chronos lib if lab comps support c++11
@@ -156,9 +174,7 @@ void myGlutDisplay(void){
                 delete particalsVec[i];
             }
             particalsVec[i]=new ParticalRound();
-            particalsVec[i]->setColor(randColor());
-            particalsVec[i]->setLaunchVector(Vector(((rand()%200)-100)/50.0,((rand()%100))/50.0,((rand()%200)-100)/50.0));
-            particalsVec[i]->setLaunchVelocity((rand()%1000)/200.0);
+            initVector(i);
         }
         speed = 1.15;
         frameCount = 1;
@@ -171,14 +187,15 @@ void myGlutDisplay(void){
         }
         particalsVec[i]->updateTimeAlive(frameTimeStep);
         Point p=physics.calculateOrigin(particalsVec[i]);
-        particalsVec[i]->setOrigin(p);
+        particalsVec[i]->setOrigin((p+Point(0,2,0)));
         if(frameCount>100){
             particalsVec[i]->setRadius(particalsVec[i]->getRadius()-shrink);
         }
     }
-    
+    //*/
     glutSwapBuffers();
     glutPostRedisplay();
+
 }
 
 void myKeyboardSpecFunc(int key, int x, int y){
@@ -299,6 +316,9 @@ void draw_grid(){
 }
 
 int main(int argc, char* argv[]){
+    for(int i=0;i<100;i++){
+        vectors.push_back(Physics::getRandomVector(Vector(1,1,1),30));
+    }
     atexit(onExit);
     
     glutInit(&argc, argv);
@@ -337,6 +357,7 @@ int main(int argc, char* argv[]){
     srand (time(NULL));
     for(int i=0; i<NUM_OF_PARTICALS; i++){
         particalsVec.push_back(new ParticalRound());
+        initVector(i);
     }
     
     

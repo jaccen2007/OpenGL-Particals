@@ -20,7 +20,7 @@ public:
     
     virtual void draw(){};
     Point getOrigin();
-    void setOrigin(Point& p);
+    void setOrigin(const Point& p);
     void resetTime();
     double getTimeAlive();
     void updateTimeAlive(double timeToAdd);
@@ -33,6 +33,9 @@ public:
     Point getColor();
     void setRadius(float r);
     float getRadius();
+
+    void setTeminalVelocity(double vt);
+    double getTeminalVelocity();
 protected:
     float radius;
     Point color;
@@ -41,6 +44,7 @@ protected:
     double timeAlive;//zero at start
     Vector launchVector;
     double launchVelocity;
+    double terminalVelocity;
 };
 
 

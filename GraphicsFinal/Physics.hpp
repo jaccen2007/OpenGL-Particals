@@ -1,5 +1,6 @@
 #include "Algebra.h"
 #include "Object.hpp"
+#define _e 2.71828
 class Physics{
 public:
     Physics(const Vector& wind,const Vector& gravity=Vector(0,-9.8,0));

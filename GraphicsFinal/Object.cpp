@@ -6,7 +6,14 @@
         launchVector=Vector(1,1,1);
         launchVector.normalize();
         launchVelocity=5;//adjust as needed
+        terminalVelocity=5;//
     };
+    void Object::setTeminalVelocity(double vt){
+        terminalVelocity=vt;
+    }
+    double Object::getTeminalVelocity(){
+        return terminalVelocity;
+    }
     
     void Object::setRadius(float r){
         if(r < 0) r = 0;
@@ -29,7 +36,7 @@
     Point Object::getOrigin(){
         return origin;
     }
-    void Object::setOrigin(Point& p){
+    void Object::setOrigin(const Point& p){
         origin=p;
     }
     void Object::resetTime(){
