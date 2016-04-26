@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include "Algebra.h"
+#include "Bezier.hpp"
 
 class Object {
     
@@ -36,6 +37,9 @@ public:
 
     void setTeminalVelocity(double vt);
     double getTeminalVelocity();
+
+    void updateColor(double time);
+    const BezierCalc* colorTransitionCalc;
 protected:
     float radius;
     Point color;

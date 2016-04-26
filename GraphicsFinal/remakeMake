@@ -2,7 +2,7 @@
 getOs(){
     echo $(g++ -MM $(find .|grep .cpp$) | grep -E "^[^:]*:"|sed 's/\(^[^:]*\):.*/\1/g')
 }
-echo "CXXFLAGS=-g" > Makefile
+echo "CXXFLAGS=-std=c++11 -g" > Makefile
 echo "LDFLAGS=-lglui -lglut -lGL -lGLU" >> Makefile
 echo "oDir=oFiles/" >> Makefile
 echo "oFiles=$(getOs)" >> Makefile

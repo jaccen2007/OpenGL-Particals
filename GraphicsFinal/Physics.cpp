@@ -40,11 +40,9 @@
         this->gravity=newGravity;
     }
     Vector Physics::getRandomVector(const Vector& seed,double degreeVariance){
-        double theta=atan(seed[1]/seed[0]);
-        double phi=acos(seed[2]);
-        double thetaAdd=rand()%int(DEG_TO_RAD(degreeVariance)*1000)/1000.0;
-        phi+=sqrt(degreeVariance*degreeVariance-thetaAdd*thetaAdd);
-        theta+=thetaAdd;
-        return Vector(cos(theta)*sin(phi),sin(theta)*sin(phi),cos(theta));
+        double r=tan(DEG_TO_RAD(degreeVariance));
+        double theta=DEG_TO_RAD(rand()%360);
+        double phi=DEG_TO_RAD(rand()%360);
+        return Vector(r*cos(theta)*sin(phi)+seed[0],r*sin(theta)*sin(phi)+seed[1],r*cos(theta)+seed[2]);
     }
 

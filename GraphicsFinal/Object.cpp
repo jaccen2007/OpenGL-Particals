@@ -25,6 +25,12 @@
     }
 
 
+    void Object::updateColor(double time){
+        if(time>1){
+            time=.999;
+        }
+        setColor(colorTransitionCalc->getColor(time));
+    }
     void Object::setColor(Point p){
         this->color = p;
     }

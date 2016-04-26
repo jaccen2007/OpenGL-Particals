@@ -29,11 +29,23 @@
 const float CAMERA_MOVE_INC = 0.2;
 const float CAMERA_ZOOM_FACTOR = 1.5;
 const float CAMERA_ROTATE_FACTOR = 2;
-const int NUM_OF_PARTICALS = 300;
+const int NUM_OF_PARTICALS = 700;
 //const int NUM_OF_PARTICALS = 1;
 std::vector<Vector> vectors;
 
-const BezierCalc RedColorChange(Point(1,1,1),Point(1,.8,0),Point(1,.2,0),Point(.5,0,0));
+const std::vector<std::vector<BezierCalc*> > ColorTransitions{
+    std::vector<BezierCalc*>{//yellow
+         new BezierCalc(Point(1,1,1),Point(1,.8,0),Point(1,.2,0),Point(.5,0,0))
+        ,new BezierCalc(Point(1,1,0),Point(1,.3,0),Point(.8,.2,0),Point(.5,0,0))
+        ,new BezierCalc(Point(1,1,.2),Point(.8,.4,0),Point(.5,0,.5),Point(.5,0,0))
+    }
+    ,std::vector<BezierCalc*>{//blue
+         new BezierCalc(Point(0,0,1),Point(1,.8,0),Point(1,.2,0),Point(.5,0,0))
+        ,new BezierCalc(Point(.5,.5,1),Point(1,.3,0),Point(.8,.2,0),Point(.5,0,0))
+        ,new BezierCalc(Point(.3,.4,.8),Point(.8,.4,0),Point(.5,0,.5),Point(.5,0,0))
+    }
+};
+
 
 bool showGrid = true;
 bool debugMode = true;
@@ -101,13 +113,15 @@ void initVector(int i){
     physics.setWind(Vector(0,0,0));
     particalsVec[i]->setLaunchVelocity(0);
     particalsVec[i]->setRadius(1);
+
     /*/
-    physics.setWind(Vector(7,0,-4));
+    //physics.setWind(Vector(7,0,-4));
+    physics.setWind(Vector(0,0,0));
     particalsVec[i]->setColor(randColor());
-    particalsVec[i]->setLaunchVector(Vector(((rand()%200)-100)/50.0,((rand()%100))/50.0,((rand()%200)-100)/50.0));
-    //particalsVec[i]->setLaunchVector(Physics::getRandomVector(Vector(1,1,1),30));
-    particalsVec[i]->setLaunchVelocity((rand()%1000)/200.0);
+    particalsVec[i]->setLaunchVector(Physics::getRandomVector(Vector(0,1,0),30));
+    particalsVec[i]->setLaunchVelocity(((rand()%1000)/200.0)+3);
     //*/
+    particalsVec[i]->colorTransitionCalc=ColorTransitions[0][rand()%ColorTransitions[0].size()];
 }
 
 void myGlutDisplay(void){
@@ -169,17 +183,11 @@ void myGlutDisplay(void){
         glLineWidth(1);
         glEnable(GL_LIGHTING);
     }
-    /* in init vector test launch vector generation
-    glBegin(GL_LINES);
-    for(int i=0;i<vectors.size();i++){
-        glVertex3d(0,0,0);
-        glVertex3dv(vectors[i].unpack());
-    }
-    glEnd();
-    /*/
+    glColor3f(0,0,0);
+    glutSolidCube(20);
     static int MAX_FRAMES=500;
     static float speed = 1.15;
-    static float shrink = 0.000015;
+    static float shrink = 0.00005;
     static float frameTimeStep= 0.003;//replace with chronos lib if lab comps support c++11
     frameCount++;
     if(frameCount%MAX_FRAMES==0){
@@ -199,17 +207,15 @@ void myGlutDisplay(void){
         if(particalsVec[i]->getRadius()>0&&particalsVec[i]->getOrigin()[1]>0){
            particalsVec[i]->draw();
         }
-        //*
         particalsVec[i]->updateTimeAlive(frameTimeStep);
         Point p=physics.calculateOrigin(particalsVec[i]);
-        particalsVec[i]->setOrigin((p+Point(0,3,0)));
+        //particalsVec[i]->setOrigin((p+Point(0,2.5,0)));
+        particalsVec[i]->setOrigin((p+Point(0,0,0)));
         if(frameCount>100){
             particalsVec[i]->setRadius(particalsVec[i]->getRadius()-shrink);
         }
-        //*/
-        particalsVec[i]->setColor(RedColorChange.getColor(double(frameCount)/double(MAX_FRAMES)));
+        particalsVec[i]->updateColor(double(frameCount)/double(MAX_FRAMES/2));
     }
-    //*/
     glutSwapBuffers();
     glutPostRedisplay();
 
@@ -295,6 +301,16 @@ void onExit(void){
             delete particalsVec[i];
         }
     }
+    for(unsigned int i=0;i<ColorTransitions.size();i++){
+        for(unsigned int j=0;j<ColorTransitions[i].size();j++){
+            if(ColorTransitions[i][j]){
+                delete ColorTransitions[i][j];
+            }
+        }
+    }
+    if(camera){
+        delete camera;
+    }
     
 }
 
@@ -314,16 +330,15 @@ void draw_grid(){
     glDisable(GL_LIGHTING);
     glPushMatrix();
     glTranslatef(-grid_size/2,0,-grid_size/2);
+    glColor3f( .2, .2, .2 );
     for(float i = 0 ; i < grid_size; i+=.2){
         glBegin(GL_LINES);
-        glColor3f( 1.0, 1.0, 1.0 );
         glVertex3f( 0.0, 0.0, i );  glVertex3f( grid_size, 0.0, i );
         glVertex3f( i, 0.0, 0.0 );  glVertex3f( i, 0.0, grid_size );
         glEnd();
     }
     
     glBegin(GL_LINES);
-    glColor3f( 1.0, 1.0, 1.0 );
     glVertex3f( 0.0, 0.0, grid_size );  glVertex3f( grid_size, 0.0, grid_size );
     glVertex3f( grid_size, 0.0, 0.0 );  glVertex3f( grid_size, 0.0, grid_size );
     glEnd();
