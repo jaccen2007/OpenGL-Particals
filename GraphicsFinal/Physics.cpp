@@ -5,16 +5,16 @@
         this->gravity=gravity;
     }
     Vector Physics::getMovementVector(Object* o){//reflect off of bounce object's normal, then set objects launch vector to the reflection of this one
-        return calculateOrigin(o)-calculateOrigin(o,(o->getTimeAlive()-VECTOR_TIME_DIFF));
+        return calculatePosition(o)-calculatePosition(o,(o->getTimeAlive()-VECTOR_TIME_DIFF));
     };
-    Point Physics::calculateOrigin(Object* o){
-        return calculateOrigin(o,o->getTimeAlive());
+    Point Physics::calculatePosition(Object* o){
+        return calculatePosition(o,o->getTimeAlive());
     }
     Vector Physics::getReflectedRay(Vector ray,Vector normal){
 	    double dot_rn = dot(ray, normal);
         return (ray-(2 * dot_rn*normal));
     }
-    Point Physics::calculateOrigin(Object* o,double t){
+    Point Physics::calculatePosition(Object* o,double t){
         Point toReturn;
         double t2=t*t;
         for(int i=0;i<3;i++){

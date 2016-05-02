@@ -7,6 +7,7 @@
         launchVector.normalize();
         launchVelocity=5;//adjust as needed
         terminalVelocity=5;//
+        origin=Point(0,0,0);
     };
     void Object::setTeminalVelocity(double vt){
         terminalVelocity=vt;
@@ -39,6 +40,15 @@
         return color;
     }
 
+    Point Object::getPosition(){
+        return position;
+    }
+    Point Object::getLocation(){
+        return position+origin;
+    }
+    void Object::setPosition(const Point& p){
+        position=p;
+    }
     Point Object::getOrigin(){
         return origin;
     }

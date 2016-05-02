@@ -22,6 +22,11 @@
 #include "ParticalRound.hpp"
 #include "Physics.hpp"
 #include "Bezier.hpp"
+#include "Shape.h"
+#include "Cone.h"
+#include "Cube.h"
+#include "Sphere.h"
+#include "Cylinder.h"
 #include <vector>
 #include <cstdlib>
 #include <ctime>
@@ -29,8 +34,8 @@
 const float CAMERA_MOVE_INC = 0.2;
 const float CAMERA_ZOOM_FACTOR = 1.5;
 const float CAMERA_ROTATE_FACTOR = 2;
-const int NUM_OF_PARTICALS = 700;
-//const int NUM_OF_PARTICALS = 1;
+//const int NUM_OF_PARTICALS = 700;
+const int NUM_OF_PARTICALS = 1;
 std::vector<Vector> vectors;
 
 const std::vector<std::vector<BezierCalc*> > ColorTransitions{
@@ -45,7 +50,24 @@ const std::vector<std::vector<BezierCalc*> > ColorTransitions{
         ,new BezierCalc(Point(.3,.4,.8),Point(.8,.4,0),Point(.5,0,.5),Point(.5,0,0))
     }
 };
+Cube* cube = new Cube();
+Cylinder* cylinder = new Cylinder();
+Cone* cone = new Cone();
+Sphere* sphere = new Sphere();
+Camera* camera = new Camera();
+Shape* shape=cone;
 
+Matrix shapeTransform(
+1,0,0,1,
+0,1,0,1,
+0,0,1,0,
+0,0,0,1);
+
+Matrix shapeTransformInv(
+1,0,0,-1,
+0,1,0,-1,
+0,0,1,0,
+0,0,0,1);
 
 bool showGrid = true;
 bool debugMode = true;
@@ -71,7 +93,6 @@ std::ostream& operator<<(std::ostream& os,Point& p){
 Physics physics(Vector(7,2,0));
 
 int main_window;
-Camera* camera = new Camera();
 std::vector<ParticalRound*> particalsVec;
 
 void myGlutIdle(void);
@@ -118,12 +139,25 @@ void initVector(int i){
     //physics.setWind(Vector(7,0,-4));
     physics.setWind(Vector(0,0,0));
     particalsVec[i]->setColor(randColor());
-    particalsVec[i]->setLaunchVector(Physics::getRandomVector(Vector(0,1,0),30));
-    particalsVec[i]->setLaunchVelocity(((rand()%1000)/200.0)+3);
+    if(rand()%2==0){
+        particalsVec[i]->setLaunchVector(Physics::getRandomVector(Vector(1,2,0),5));
+    }else{
+        particalsVec[i]->setLaunchVector(Physics::getRandomVector(Vector(1,.8,0),5));
+    }
+    //particalsVec[i]->setLaunchVelocity(((rand()%1000)/200.0)+3);
+    particalsVec[i]->setLaunchVelocity(6);
     //*/
     particalsVec[i]->colorTransitionCalc=ColorTransitions[0][rand()%ColorTransitions[0].size()];
 }
-
+bool collision(Point from,Vector direction,double& distance){
+    bool toReturn=false;
+    distance=shape->Intersect(from,direction,shapeTransform);
+    if(distance>0&&distance<10){
+        //printf("distance: %f\n",distance);
+        toReturn=true;
+    }
+    return toReturn;
+} 
 void myGlutDisplay(void){
     static long frameCount = 1;
     
@@ -204,18 +238,64 @@ void myGlutDisplay(void){
     }
 
     for(int i=0;i<NUM_OF_PARTICALS;i++){
-        if(particalsVec[i]->getRadius()>0&&particalsVec[i]->getOrigin()[1]>0){
+        if(particalsVec[i]->getRadius()>0&&particalsVec[i]->getLocation()[1]>0){
            particalsVec[i]->draw();
         }
         particalsVec[i]->updateTimeAlive(frameTimeStep);
-        Point p=physics.calculateOrigin(particalsVec[i]);
-        //particalsVec[i]->setOrigin((p+Point(0,2.5,0)));
-        particalsVec[i]->setOrigin((p+Point(0,0,0)));
+        Point p=physics.calculatePosition(particalsVec[i]);
+        particalsVec[i]->setPosition(p);
+        double collisionDist;
+        Vector movementVector=physics.getMovementVector(particalsVec[i]);
+        Point fromPoint=particalsVec[i]->getPosition();
+        glLineWidth(3);
+        glColor3f(1,0,0);
+        glBegin(GL_LINES);
+        glVertex3dv(fromPoint.unpack());
+        glVertex3dv(Point(movementVector[0],movementVector[1],movementVector[2]).unpack());
+        glEnd();
+        if(collision(fromPoint,movementVector,collisionDist)){
+            Vector normal=shape->findIsectNormal(fromPoint,movementVector,collisionDist);
+            Point intersect=fromPoint+movementVector*collisionDist;
+
+        glColor3f(1,0,1);
+        glBegin(GL_LINES);
+        glVertex3dv(intersect.unpack());
+        glVertex3dv(Point(normal[0],normal[1],normal[2]).unpack());
+        glEnd();
+            Vector newLaunchVect=physics.getReflectedRay(movementVector,shape->findIsectNormal(fromPoint,movementVector,collisionDist));
+        glColor3f(0,1,0);
+        glBegin(GL_LINES);
+        glVertex3dv(intersect.unpack());
+        glVertex3dv(Point(newLaunchVect[0],newLaunchVect[1],newLaunchVect[2]).unpack());
+        glEnd();
+            newLaunchVect.normalize();
+            particalsVec[i]->setLaunchVector(newLaunchVect);
+            particalsVec[i]->setOrigin(particalsVec[i]->getLocation());
+            double timeToCollision=particalsVec[i]->getTimeAlive();
+            particalsVec[i]->resetTime();
+            particalsVec[i]->setLaunchVelocity(particalsVec[i]->getLuanchVelocity()/(timeToCollision*10));
+
+    glColor3f(1,1,0);
+    glPushMatrix();
+    glMultMatrixd(shapeTransform.unpack());
+    shape->setSegments(20,20);
+    shape->draw();
+    glPopMatrix();
+    glutSwapBuffers();
+    glutPostRedisplay();
+    timeToCollision=1;
+        }
         if(frameCount>100){
             particalsVec[i]->setRadius(particalsVec[i]->getRadius()-shrink);
         }
         particalsVec[i]->updateColor(double(frameCount)/double(MAX_FRAMES/2));
     }
+    glColor3f(1,1,0);
+    glPushMatrix();
+    glMultMatrixd(shapeTransform.unpack());
+    shape->setSegments(20,20);
+    shape->draw();
+    glPopMatrix();
     glutSwapBuffers();
     glutPostRedisplay();
 
