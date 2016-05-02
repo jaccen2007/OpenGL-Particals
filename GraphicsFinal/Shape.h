@@ -37,7 +37,6 @@ protected:
 		glNormal3dv(v.unpack());
 	};
 
-
 	int m_segmentsX, m_segmentsY;
 };
 

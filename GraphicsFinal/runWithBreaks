@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [[ $# < 1 ]] || [[ $# > 2 ]]; then
+    echo "Usage $0 prog name";
+fi;
+
+breakPoints=$(fgrep -rn "//GDB" |
+grep -v $(echo $0| sed 's/.*\/\(.*\)$/\1/g')|
+sed 's/:[^0-9]/ /g'|
+grep -v "Bin"|
+awk '{$2=$1; $1=$3; $3=""; print $0}' |
+sort -n)
+echo "breakPoints found: "
+printf "$breakPoints\n"
+echo ""
+echo "run? [Y/N]"
+
+breakPointCmd="gdb $1 "$(printf "$breakPoints\n"|
+awk '{$1="b";print "-ex=\""$0"\""}')" -ex=r";
+
+eval $breakPointCmd;
+exit 0;

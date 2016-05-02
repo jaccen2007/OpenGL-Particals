@@ -139,11 +139,13 @@ void initVector(int i){
     //physics.setWind(Vector(7,0,-4));
     physics.setWind(Vector(0,0,0));
     particalsVec[i]->setColor(randColor());
+    /*
     if(rand()%2==0){
         particalsVec[i]->setLaunchVector(Physics::getRandomVector(Vector(1,2,0),5));
     }else{
+    */
         particalsVec[i]->setLaunchVector(Physics::getRandomVector(Vector(1,.8,0),5));
-    }
+    //}
     //particalsVec[i]->setLaunchVelocity(((rand()%1000)/200.0)+3);
     particalsVec[i]->setLaunchVelocity(6);
     //*/
@@ -248,25 +250,30 @@ void myGlutDisplay(void){
         Vector movementVector=physics.getMovementVector(particalsVec[i]);
         Point fromPoint=particalsVec[i]->getPosition();
         glLineWidth(3);
+        glPointSize(3);
         glColor3f(1,0,0);
         glBegin(GL_LINES);
         glVertex3dv(fromPoint.unpack());
-        glVertex3dv(Point(movementVector[0],movementVector[1],movementVector[2]).unpack());
+        Point toPoint=fromPoint+movementVector;
+        glVertex3dv((toPoint*10).unpack());
         glEnd();
         if(collision(fromPoint,movementVector,collisionDist)){
-            Vector normal=shape->findIsectNormal(fromPoint,movementVector,collisionDist);
+            //Vector normal=shape->findIsectNormal(fromPoint,movementVector,collisionDist);
+            Vector normal(0,-1,0);
             Point intersect=fromPoint+movementVector*collisionDist;
-
         glColor3f(1,0,1);
         glBegin(GL_LINES);
         glVertex3dv(intersect.unpack());
-        glVertex3dv(Point(normal[0],normal[1],normal[2]).unpack());
+        glVertex3dv((intersect+normal).unpack());
         glEnd();
-            Vector newLaunchVect=physics.getReflectedRay(movementVector,shape->findIsectNormal(fromPoint,movementVector,collisionDist));
+            movementVector.normalize();
+            Vector newLaunchVect=physics.getReflectedRay(-movementVector,normal);
+            //Vector newLaunchVect=physics.getReflectedRay(movementVector,shape->findIsectNormal(fromPoint,movementVector,collisionDist));
         glColor3f(0,1,0);
         glBegin(GL_LINES);
         glVertex3dv(intersect.unpack());
-        glVertex3dv(Point(newLaunchVect[0],newLaunchVect[1],newLaunchVect[2]).unpack());
+        Point reflectedTo=intersect+newLaunchVect;
+        glVertex3dv((reflectedTo).unpack());
         glEnd();
             newLaunchVect.normalize();
             particalsVec[i]->setLaunchVector(newLaunchVect);
@@ -283,7 +290,8 @@ void myGlutDisplay(void){
     glPopMatrix();
     glutSwapBuffers();
     glutPostRedisplay();
-    timeToCollision=1;
+            //GDB 0
+            int i=0;
         }
         if(frameCount>100){
             particalsVec[i]->setRadius(particalsVec[i]->getRadius()-shrink);
