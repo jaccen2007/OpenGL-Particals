@@ -16,7 +16,7 @@
     }
     Vector Physics::getReflectedRay(Vector ray,Vector normal){
 	    double dot_rn = dot(ray, normal);
-        //GDB 2
+        //GaDB 2
         Vector toReturn=((2 * dot_rn*normal)-ray);
         return toReturn;
     }

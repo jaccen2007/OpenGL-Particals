@@ -34,7 +34,6 @@
 const float CAMERA_MOVE_INC = 0.2;
 const float CAMERA_ZOOM_FACTOR = 1.5;
 const float CAMERA_ROTATE_FACTOR = 2;
-int value=0;
 const int NUM_OF_PARTICALS = 200;
 //const int NUM_OF_PARTICALS = 1;
 std::vector<Vector> vectors;
@@ -135,7 +134,7 @@ Point randColor(){
 }
 
 void initVector(int i){
-    if(i==0) shape=shapes[rand()%shapes.size()];
+    //if(i==0) shape=shapes[rand()%shapes.size()];
     /*
     physics.setGravity(Vector(0,0,0));
     physics.setWind(Vector(0,0,0));
@@ -148,6 +147,7 @@ void initVector(int i){
     particalsVec[i]->setColor(randColor());
         particalsVec[i]->setLaunchVector(Physics::getRandomVector(Vector(1,1,0),30));
         //particalsVec[i]->setLaunchVector(Physics::getRandomVector(Vector(1,.8,0),5));
+    //particalsVec[i]->setLaunchVelocity(10);
     particalsVec[i]->setLaunchVelocity(((rand()%1000)/200.0)+3);
     //*/
     particalsVec[i]->colorTransitionCalc=ColorTransitions[0][rand()%ColorTransitions[0].size()];
@@ -155,8 +155,7 @@ void initVector(int i){
 bool collision(Point from,Vector direction,double& distance){
     bool toReturn=false;
     distance=shape->Intersect(from,direction,shapeTransform);
-    if(distance>0&&distance<.01){
-        //printf("distance: %f\n",distance);
+    if(distance>0&&distance<0.02){
         toReturn=true;
     }
     return toReturn;
@@ -256,12 +255,12 @@ void myGlutDisplay(void){
         //glBegin(GL_LINES);
         //glVertex3dv(fromPoint.unpack());
         movementVector.normalize();
-        Point toPoint=fromPoint+movementVector;
+        //Point toPoint=fromPoint+movementVector;
         //glVertex3dv((toPoint).unpack());
         //glEnd();
         if(collision(fromPoint,movementVector,collisionDist)){
             Vector normal=shape->findIsectNormal(shapeTransformInv*fromPoint,shapeTransformInv*movementVector,collisionDist);
-            Point intersect=fromPoint+movementVector*collisionDist;
+            //Point intersect=fromPoint+movementVector*collisionDist;
             //glColor3f(1,1,1);
             //glTranslatef(intersect[0],intersect[1],intersect[2]);
             //glutSolidSphere(.01,5,5);
@@ -272,7 +271,7 @@ void myGlutDisplay(void){
         //glVertex3dv((intersect+normal).unpack());
         //glEnd();
             movementVector.normalize();
-            Vector newLaunchVect=physics.getReflectedRay(movementVector,normal);
+            Vector newLaunchVect=-physics.getReflectedRay(movementVector,normal);
         //glColor3f(0,1,0);
         //glBegin(GL_LINES);
         //glVertex3dv(intersect.unpack());
@@ -286,21 +285,20 @@ void myGlutDisplay(void){
             particalsVec[i]->resetTime();
             particalsVec[i]->setLaunchVelocity(particalsVec[i]->getLuanchVelocity()/(timeToCollision*10));
 
-    glColor3f(1,1,0);
-    glPushMatrix();
-    glMultMatrixd(shapeTransform.unpack());
-    shape->setSegments(20,20);
-    shape->draw();
-    glPopMatrix();
-    glutSwapBuffers();
-    glutPostRedisplay();
-            //GDB 0
-            int i=0;
+    //glColor3f(1,1,0);
+    //glPushMatrix();
+    //glMultMatrixd(shapeTransform.unpack());
+    //shape->setSegments(20,20);
+    //shape->draw();
+    //glPopMatrix();
+    //glutSwapBuffers();
+    //glutPostRedisplay();
         }
         if(frameCount>100){
             particalsVec[i]->setRadius(particalsVec[i]->getRadius()-shrink);
         }
         particalsVec[i]->updateColor(double(frameCount)/double(MAX_FRAMES/2));
+        //GDB 0 if wireframe == true
     }
     glColor3f(1,1,0);
     glPushMatrix();
