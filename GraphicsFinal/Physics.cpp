@@ -5,19 +5,20 @@
         this->gravity=gravity;
     }
     Vector Physics::getMovementVector(Object* o){//reflect off of bounce object's normal, then set objects launch vector to the reflection of this one
-        return calculatePosition(o,(o->getTimeAlive()+VECTOR_TIME_DIFF))-calculatePosition(o);
+        double timeAlive=o->getTimeAlive();
+        Point position=calculatePosition(o);
+        Point point2=calculatePosition(o,timeAlive+.0001);
+        Vector toReturn=point2-position;
+        return toReturn;
     };
     Point Physics::calculatePosition(Object* o){
         return calculatePosition(o,o->getTimeAlive());
     }
     Vector Physics::getReflectedRay(Vector ray,Vector normal){
-	    //double dot_rn = RAD_TO_DEG(dot(ray, normal));
 	    double dot_rn = dot(ray, normal);
-        if(dot_rn<0){
-            dot_rn*=-1;
-        }
-        //GnotDB 2
-        return ((2 * dot_rn*normal)-ray);
+        //GDB 2
+        Vector toReturn=((2 * dot_rn*normal)-ray);
+        return toReturn;
     }
     Point Physics::calculatePosition(Object* o,double t){
         Point toReturn;

@@ -34,8 +34,9 @@
 const float CAMERA_MOVE_INC = 0.2;
 const float CAMERA_ZOOM_FACTOR = 1.5;
 const float CAMERA_ROTATE_FACTOR = 2;
-//const int NUM_OF_PARTICALS = 700;
-const int NUM_OF_PARTICALS = 1;
+int value=0;
+const int NUM_OF_PARTICALS = 200;
+//const int NUM_OF_PARTICALS = 1;
 std::vector<Vector> vectors;
 
 const std::vector<std::vector<BezierCalc*> > ColorTransitions{
@@ -50,22 +51,27 @@ const std::vector<std::vector<BezierCalc*> > ColorTransitions{
         ,new BezierCalc(Point(.3,.4,.8),Point(.8,.4,0),Point(.5,0,.5),Point(.5,0,0))
     }
 };
-Cube* cube = new Cube();
-Cylinder* cylinder = new Cylinder();
-Cone* cone = new Cone();
-Sphere* sphere = new Sphere();
+const std::vector<Shape*> shapes{
+new Cube()
+,new Cylinder()
+,new Cone()
+,new Sphere()
+};
+
+Shape* shape=shapes[0];
+
+
 Camera* camera = new Camera();
-Shape* shape=cone;
 
 Matrix shapeTransform(
-1,0,0,1,
-0,1,0,1,
+1,0,0,2,
+0,.5,0,1,
 0,0,1,0,
 0,0,0,1);
 
 Matrix shapeTransformInv(
-1,0,0,-1,
-0,1,0,-1,
+1,0,0,-2,
+0,2,0,-1,
 0,0,1,0,
 0,0,0,1);
 
@@ -129,6 +135,7 @@ Point randColor(){
 }
 
 void initVector(int i){
+    if(i==0) shape=shapes[rand()%shapes.size()];
     /*
     physics.setGravity(Vector(0,0,0));
     physics.setWind(Vector(0,0,0));
@@ -139,22 +146,16 @@ void initVector(int i){
     //physics.setWind(Vector(7,0,-4));
     physics.setWind(Vector(0,0,0));
     particalsVec[i]->setColor(randColor());
-    /*
-    if(rand()%2==0){
-        particalsVec[i]->setLaunchVector(Physics::getRandomVector(Vector(1,2,0),5));
-    }else{
-    */
-        particalsVec[i]->setLaunchVector(Physics::getRandomVector(Vector(1,.8,0),5));
-    //}
-    //particalsVec[i]->setLaunchVelocity(((rand()%1000)/200.0)+3);
-    particalsVec[i]->setLaunchVelocity(6);
+        particalsVec[i]->setLaunchVector(Physics::getRandomVector(Vector(1,1,0),30));
+        //particalsVec[i]->setLaunchVector(Physics::getRandomVector(Vector(1,.8,0),5));
+    particalsVec[i]->setLaunchVelocity(((rand()%1000)/200.0)+3);
     //*/
     particalsVec[i]->colorTransitionCalc=ColorTransitions[0][rand()%ColorTransitions[0].size()];
 }
 bool collision(Point from,Vector direction,double& distance){
     bool toReturn=false;
     distance=shape->Intersect(from,direction,shapeTransform);
-    if(distance>0&&distance<10){
+    if(distance>0&&distance<.01){
         //printf("distance: %f\n",distance);
         toReturn=true;
     }
@@ -249,32 +250,35 @@ void myGlutDisplay(void){
         double collisionDist;
         Vector movementVector=physics.getMovementVector(particalsVec[i]);
         Point fromPoint=particalsVec[i]->getPosition();
-        glLineWidth(3);
-        glPointSize(3);
-        glColor3f(1,0,0);
-        glBegin(GL_LINES);
-        glVertex3dv(fromPoint.unpack());
+        //glLineWidth(3);
+        //glPointSize(3);
+        //glColor3f(1,0,0);
+        //glBegin(GL_LINES);
+        //glVertex3dv(fromPoint.unpack());
+        movementVector.normalize();
         Point toPoint=fromPoint+movementVector;
-        glVertex3dv((toPoint*10).unpack());
-        glEnd();
+        //glVertex3dv((toPoint).unpack());
+        //glEnd();
         if(collision(fromPoint,movementVector,collisionDist)){
-            //Vector normal=shape->findIsectNormal(fromPoint,movementVector,collisionDist);
-            Vector normal(0,-1,0);
+            Vector normal=shape->findIsectNormal(shapeTransformInv*fromPoint,shapeTransformInv*movementVector,collisionDist);
             Point intersect=fromPoint+movementVector*collisionDist;
-        glColor3f(1,0,1);
-        glBegin(GL_LINES);
-        glVertex3dv(intersect.unpack());
-        glVertex3dv((intersect+normal).unpack());
-        glEnd();
+            //glColor3f(1,1,1);
+            //glTranslatef(intersect[0],intersect[1],intersect[2]);
+            //glutSolidSphere(.01,5,5);
+            //glTranslatef(-intersect[0],-intersect[1],-intersect[2]);
+        //glColor3f(1,0,1);
+        //glBegin(GL_LINES);
+        //glVertex3dv(intersect.unpack());
+        //glVertex3dv((intersect+normal).unpack());
+        //glEnd();
             movementVector.normalize();
-            Vector newLaunchVect=physics.getReflectedRay(-movementVector,normal);
-            //Vector newLaunchVect=physics.getReflectedRay(movementVector,shape->findIsectNormal(fromPoint,movementVector,collisionDist));
-        glColor3f(0,1,0);
-        glBegin(GL_LINES);
-        glVertex3dv(intersect.unpack());
-        Point reflectedTo=intersect+newLaunchVect;
-        glVertex3dv((reflectedTo).unpack());
-        glEnd();
+            Vector newLaunchVect=physics.getReflectedRay(movementVector,normal);
+        //glColor3f(0,1,0);
+        //glBegin(GL_LINES);
+        //glVertex3dv(intersect.unpack());
+        //Point reflectedTo=intersect+newLaunchVect;
+        //glVertex3dv((reflectedTo).unpack());
+        //glEnd();
             newLaunchVect.normalize();
             particalsVec[i]->setLaunchVector(newLaunchVect);
             particalsVec[i]->setOrigin(particalsVec[i]->getLocation());

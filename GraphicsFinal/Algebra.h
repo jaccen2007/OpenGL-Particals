@@ -9,10 +9,15 @@ const double EPSILON = 1e-30;
 #define RAD 0.0174532925199432954743716805978692718782
 #define DBL_MAX 1.7976931348623158e+308  //this defines the max double
 
-#define IN_RANGE(a,b)   (((a>(b-EPSILON))&&(a<(b+EPSILON)))?1:0)
 #define DEG_TO_RAD(a)	(a*RAD)
 #define RAD_TO_DEG(a)	(a/RAD)
 #define SQR(a)	 (a*a)
+
+inline bool IN_RANGE(double a, double b){
+    double diff=(a-b);
+    if(diff<0) diff*=-1;
+    return diff<EPSILON;
+}
 
 class Point {
 public:
