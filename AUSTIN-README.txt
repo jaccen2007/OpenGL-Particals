@@ -1,1 +1,0 @@
-Long story short. I was pushed into a pool this weekend with my phone and backpack/laptop so i wont have either for another week. I have my ipad by i can only text/receive texts through iMessage. Im in rogers 214 right now working on the project. 
