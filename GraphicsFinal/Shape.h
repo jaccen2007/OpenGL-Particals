@@ -1,7 +1,7 @@
 #ifndef SHAPE_H
 #define SHAPE_H
 
-#include <GL/glui.h>
+#include "includeGL.hpp"
 #include "Algebra.h"
 
 

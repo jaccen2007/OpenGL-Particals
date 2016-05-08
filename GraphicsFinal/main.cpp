@@ -38,6 +38,9 @@ const int NUM_OF_PARTICALS = 200;
 //const int NUM_OF_PARTICALS = 1;
 std::vector<Vector> vectors;
 
+ParticalRound *particals[NUM_OF_PARTICALS];
+std::vector<ParticalRound> additionalParticals;
+
 const std::vector<std::vector<BezierCalc*> > ColorTransitions{
     std::vector<BezierCalc*>{//yellow
          new BezierCalc(Point(1,1,1),Point(1,.8,0),Point(1,.2,0),Point(.5,0,0))
@@ -219,8 +222,11 @@ void myGlutDisplay(void){
         glLineWidth(1);
         glEnable(GL_LIGHTING);
     }
+    
     glColor3f(0,0,0);
     glutSolidCube(20);
+    
+    
     static int MAX_FRAMES=500;
     static float speed = 1.15;
     static float shrink = 0.00005;
@@ -308,6 +314,55 @@ void myGlutDisplay(void){
     glPopMatrix();
     glutSwapBuffers();
     glutPostRedisplay();
+    
+    
+    ///////////FIREWORKS//////////
+    static float speed0 = 1.15;
+    static float shrink0 = 0.00015;
+    
+    if(frameCount < 10){
+        speed0 -= 0.0025;
+    }
+    if(frameCount < 30){
+        speed0 -= 0.002;
+    }
+    if(frameCount > 40){
+        speed0 -= 0.01;
+    }
+    
+    
+    if(speed0 < 1.001) speed0 = 1.001;
+    
+    
+    for(int i=0; i<NUM_OF_PARTICALS; i++){
+        Point o = particals[i]->getOrigin()*speed0;
+        if(frameCount > 60){
+            o[1] -= 0.005;
+        }else{
+            ParticalRound pp(o[0], o[1], o[2]);
+            pp.setColor(particals[i]->getColor());
+            additionalParticals.push_back(pp);
+        }
+        particals[i]->setOrigin(o);
+        particals[i]->setRadius(particals[i]->getRadius()-shrink0);
+        
+        Point c = particals[i]->getColor();
+        c[0] -= 0.09;
+        c[1] -= 0.09;
+        c[2] -= 0.09;
+        
+        particals[i]->setColor(c);
+        particals[i]->draw();
+    }
+    
+    for(int i=0; i<additionalParticals.size(); i++){
+        additionalParticals[i].setRadius(additionalParticals[i].getRadius()-(shrink0*10));
+        if(additionalParticals[i].getRadius() > 0){
+            additionalParticals[i].draw();
+        }
+        
+    }
+    //////////////////////////
 
 }
 
@@ -475,6 +530,21 @@ int main(int argc, char* argv[]){
 
     glPolygonOffset(1, 1);
     
+    ///////SEED FIREWORKS///////
+    srand (time(NULL));
+    particals[0] =  new ParticalRound();
+    for(int i=0; i<NUM_OF_PARTICALS; i++){
+        
+        Point oo((((double) rand() / (RAND_MAX)) -0.5)/10.0, ((((double) rand() / (RAND_MAX)) -0.5)/10.0), ((((double) rand() / (RAND_MAX)) -0.5)/10.0));
+        
+        if((oo[0]*oo[0] + oo[1]*oo[1] + oo[2]*oo[2]) < particals[0]->getRadius()*particals[0]->getRadius()){
+            particals[i] = new ParticalRound(oo[0], oo[1], oo[2]);
+            particals[i]->setColor(Point(10,0,0));
+        }else{
+            i--;
+        }
+    }
+    /////////////////////////////
     
     srand (time(NULL));
     for(int i=0; i<NUM_OF_PARTICALS; i++){
