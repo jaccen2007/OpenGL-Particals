@@ -1,7 +1,7 @@
 #include "Bezier.hpp"
         BezierCalc::BezierCalc(const Point& control0,const Point& control1,const Point& control2,const Point& control3){
-            ps.push_back(control0);
-            ps.push_back(control1);
+            ps.push_back(control0*20);
+            ps.push_back(control1*2);
             ps.push_back(control2);
             ps.push_back(control3);
             for(int i=0;i<3;i++){

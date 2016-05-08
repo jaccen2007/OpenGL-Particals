@@ -35,7 +35,8 @@ const int NUM_OF_PARTICALS = 200;
 //const int NUM_OF_PARTICALS = 1;
 std::vector<Vector> vectors;
 
-ParticalRound *particals[NUM_OF_PARTICALS];
+Point fireWorkLocation;
+std::vector<ParticalRound*> particals(NUM_OF_PARTICALS);
 std::vector<ParticalRound> additionalParticals;
 
 const std::vector<std::vector<BezierCalc*> > ColorTransitions{
@@ -72,6 +73,7 @@ bool showGrid = true;
 bool debugMode = true;
 bool wireframe = false;
 
+int sparkColors=0;
 int	 camRotU = 0;
 int	 camRotV = 0;
 int	 camRotW = 0;
@@ -119,32 +121,47 @@ void myGlutIdle(void){
     glutPostRedisplay();
 }
 Point randColor(){
-    int randVal=rand()%7;//all combinations of three 0's or 1's
-    //except 111, white doesn't show well
+    int randVal=rand()%7+1;//all combinations of three 0's or 1's
+    //except 000, black doesn't show well
     char midMask=3;//010
                        //get each bit, 0 or 1
-    Point toReturn(randVal>>2,(randVal&midMask)>>1,(randVal&1));
+    Point toReturn((randVal>>2)*20,((randVal&midMask)>>1)*20,((randVal&1))*20);
     return toReturn;
 }
 
-void initVector(int i){
-    //if(i==0) shape=shapes[rand()%shapes.size()];
-    /*
-    physics.setGravity(Vector(0,0,0));
-    physics.setWind(Vector(0,0,0));
-    particalsVec[i]->setLaunchVelocity(0);
-    particalsVec[i]->setRadius(1);
+void resetFireWork(){
 
-    /*/
-    //physics.setWind(Vector(7,0,-4));
-    physics.setWind(Vector(0,0,0));
+    Point fireWorkColor=randColor();
+    if(particals[0]){
+        delete particals[0];
+    }
+    particals[0] = new ParticalRound();
+    for(int i=0; i<NUM_OF_PARTICALS; i++){
+        
+        Point oo((((double) rand() / (RAND_MAX)) -0.5)/10.0, ((((double) rand() / (RAND_MAX)) -0.5)/10.0), ((((double) rand() / (RAND_MAX)) -0.5)/10.0));
+        
+        if((oo[0]*oo[0] + oo[1]*oo[1] + oo[2]*oo[2]) < particals[0]->getRadius()*particals[0]->getRadius()){
+            if(particals[i]){
+                delete particals[i];
+            }
+            particals[i] = new ParticalRound(oo[0], oo[1], oo[2]);
+            particals[i]->setColor(fireWorkColor);
+        }else{
+            i--;
+        }
+        additionalParticals.erase(additionalParticals.begin(), additionalParticals.end());
+    }
+    fireWorkLocation=Point()+((double(rand()%100)/200.0)+2)*Physics::getRandomVector(Vector(0,1,0),30);
+    fireWorkLocation[2]-=1.5;
+
+}
+
+void initVector(int i){
+    if(i==0){ sparkColors=rand()%ColorTransitions.size();}
     particalsVec[i]->setColor(randColor());
         particalsVec[i]->setLaunchVector(Physics::getRandomVector(Vector(1,1,0),30));
-        //particalsVec[i]->setLaunchVector(Physics::getRandomVector(Vector(1,.8,0),5));
-    //particalsVec[i]->setLaunchVelocity(10);
     particalsVec[i]->setLaunchVelocity(((rand()%1000)/200.0)+3);
-    //*/
-    particalsVec[i]->colorTransitionCalc=ColorTransitions[0][rand()%ColorTransitions[0].size()];
+    particalsVec[i]->colorTransitionCalc=ColorTransitions[sparkColors][rand()%ColorTransitions[sparkColors].size()];
 }
 bool collision(Point from,Vector direction,double& distance){
     bool toReturn=false;
@@ -219,10 +236,18 @@ void myGlutDisplay(void){
     
     
     static int MAX_FRAMES=500;
+    static int MAX_FRAMES_FireWorks=500;
     static float speed = 1.15;
     static float shrink = 0.00005;
     static float frameTimeStep= 0.003;//replace with chronos lib if lab comps support c++11
+    static float speed0 = 1.15;
+    static float shrink0 = 0.00015;
     frameCount++;
+    if(frameCount%MAX_FRAMES_FireWorks==0){
+        resetFireWork();
+        speed0 = 1.15;
+        shrink0 = 0.00015;
+    }
     if(frameCount%MAX_FRAMES==0){
         for(int i=0;i<NUM_OF_PARTICALS;i++){
             if(particalsVec[i]){
@@ -246,35 +271,11 @@ void myGlutDisplay(void){
         double collisionDist;
         Vector movementVector=physics.getMovementVector(particalsVec[i]);
         Point fromPoint=particalsVec[i]->getPosition();
-        //glLineWidth(3);
-        //glPointSize(3);
-        //glColor3f(1,0,0);
-        //glBegin(GL_LINES);
-        //glVertex3dv(fromPoint.unpack());
         movementVector.normalize();
-        //Point toPoint=fromPoint+movementVector;
-        //glVertex3dv((toPoint).unpack());
-        //glEnd();
         if(collision(fromPoint,movementVector,collisionDist)){
             Vector normal=shape->findIsectNormal(shapeTransformInv*fromPoint,shapeTransformInv*movementVector,collisionDist);
-            //Point intersect=fromPoint+movementVector*collisionDist;
-            //glColor3f(1,1,1);
-            //glTranslatef(intersect[0],intersect[1],intersect[2]);
-            //glutSolidSphere(.01,5,5);
-            //glTranslatef(-intersect[0],-intersect[1],-intersect[2]);
-        //glColor3f(1,0,1);
-        //glBegin(GL_LINES);
-        //glVertex3dv(intersect.unpack());
-        //glVertex3dv((intersect+normal).unpack());
-        //glEnd();
             movementVector.normalize();
             Vector newLaunchVect=-physics.getReflectedRay(movementVector,normal);
-        //glColor3f(0,1,0);
-        //glBegin(GL_LINES);
-        //glVertex3dv(intersect.unpack());
-        //Point reflectedTo=intersect+newLaunchVect;
-        //glVertex3dv((reflectedTo).unpack());
-        //glEnd();
             newLaunchVect.normalize();
             particalsVec[i]->setLaunchVector(newLaunchVect);
             particalsVec[i]->setOrigin(particalsVec[i]->getLocation());
@@ -282,34 +283,15 @@ void myGlutDisplay(void){
             particalsVec[i]->resetTime();
             particalsVec[i]->setLaunchVelocity(particalsVec[i]->getLuanchVelocity()/(timeToCollision*10));
 
-    //glColor3f(1,1,0);
-    //glPushMatrix();
-    //glMultMatrixd(shapeTransform.unpack());
-    //shape->setSegments(20,20);
-    //shape->draw();
-    //glPopMatrix();
-    //glutSwapBuffers();
-    //glutPostRedisplay();
         }
         if(frameCount>100){
             particalsVec[i]->setRadius(particalsVec[i]->getRadius()-shrink);
         }
         particalsVec[i]->updateColor(double(frameCount)/double(MAX_FRAMES/2));
-        //GDB 0 if wireframe == true
     }
-    glColor3f(1,1,0);
-    glPushMatrix();
-    glMultMatrixd(shapeTransform.unpack());
-    shape->setSegments(20,20);
-    shape->draw();
-    glPopMatrix();
-    glutSwapBuffers();
-    glutPostRedisplay();
     
     
     ///////////FIREWORKS//////////
-    static float speed0 = 1.15;
-    static float shrink0 = 0.00015;
     
     if(frameCount < 10){
         speed0 -= 0.0025;
@@ -325,6 +307,8 @@ void myGlutDisplay(void){
     if(speed0 < 1.001) speed0 = 1.001;
     
     
+    glPushMatrix();
+    glTranslatef(fireWorkLocation[0],fireWorkLocation[1],fireWorkLocation[2]);
     for(int i=0; i<NUM_OF_PARTICALS; i++){
         Point o = particals[i]->getOrigin()*speed0;
         if(frameCount > 60){
@@ -346,13 +330,22 @@ void myGlutDisplay(void){
         particals[i]->draw();
     }
     
-    for(int i=0; i<additionalParticals.size(); i++){
+    for(unsigned int i=0; i<additionalParticals.size(); i++){
         additionalParticals[i].setRadius(additionalParticals[i].getRadius()-(shrink0*10));
         if(additionalParticals[i].getRadius() > 0){
             additionalParticals[i].draw();
         }
         
     }
+    glPopMatrix();
+    glColor3f(1,1,0);
+    glPushMatrix();
+    glMultMatrixd(shapeTransform.unpack());
+    shape->setSegments(20,20);
+    shape->draw();
+    glPopMatrix();
+    glutSwapBuffers();
+    glutPostRedisplay();
     //////////////////////////
 
 }
@@ -444,6 +437,11 @@ void onExit(void){
             }
         }
     }
+    for(unsigned int i=0;i<particals.size();i++){
+        if(particals[i]){
+            delete particals[i];
+        }
+    }
     if(camera){
         delete camera;
     }
@@ -521,23 +519,11 @@ int main(int argc, char* argv[]){
 
     glPolygonOffset(1, 1);
     
-    ///////SEED FIREWORKS///////
     srand (time(NULL));
-    particals[0] =  new ParticalRound();
-    for(int i=0; i<NUM_OF_PARTICALS; i++){
-        
-        Point oo((((double) rand() / (RAND_MAX)) -0.5)/10.0, ((((double) rand() / (RAND_MAX)) -0.5)/10.0), ((((double) rand() / (RAND_MAX)) -0.5)/10.0));
-        
-        if((oo[0]*oo[0] + oo[1]*oo[1] + oo[2]*oo[2]) < particals[0]->getRadius()*particals[0]->getRadius()){
-            particals[i] = new ParticalRound(oo[0], oo[1], oo[2]);
-            particals[i]->setColor(Point(10,0,0));
-        }else{
-            i--;
-        }
-    }
+    ///////SEED FIREWORKS///////
+    resetFireWork();
     /////////////////////////////
     
-    srand (time(NULL));
     for(int i=0; i<NUM_OF_PARTICALS; i++){
         particalsVec.push_back(new ParticalRound());
         initVector(i);
