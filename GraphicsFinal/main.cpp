@@ -23,10 +23,7 @@
 #include "Physics.hpp"
 #include "Bezier.hpp"
 #include "Shape.h"
-#include "Cone.h"
 #include "Cube.h"
-#include "Sphere.h"
-#include "Cylinder.h"
 #include <vector>
 #include <cstdlib>
 #include <ctime>
@@ -53,14 +50,8 @@ const std::vector<std::vector<BezierCalc*> > ColorTransitions{
         ,new BezierCalc(Point(.3,.4,.8),Point(.8,.4,0),Point(.5,0,.5),Point(.5,0,0))
     }
 };
-const std::vector<Shape*> shapes{
-new Cube()
-,new Cylinder()
-,new Cone()
-,new Sphere()
-};
 
-Shape* shape=shapes[0];
+Shape* shape=new Cube();
 
 
 Camera* camera = new Camera();

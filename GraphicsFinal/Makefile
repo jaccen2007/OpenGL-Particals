@@ -18,8 +18,7 @@ Physics.o: Physics.cpp Physics.hpp Algebra.h Object.hpp Bezier.hpp
 ParticalRound.o: ParticalRound.cpp ParticalRound.hpp Object.hpp Algebra.h \
  Bezier.hpp includeGL.hpp
 main.o: main.cpp Camera.h Algebra.h Object.hpp Bezier.hpp Partical.hpp \
- includeGL.hpp ParticalRound.hpp Physics.hpp Shape.h Cone.h Cube.h \
- Sphere.h Cylinder.h
+ includeGL.hpp ParticalRound.hpp Physics.hpp Shape.h Cube.h
 Object.o: Object.cpp Object.hpp Algebra.h Bezier.hpp
 unclear:
 	@if ! mv $(oDir)*.o .; then printf "";fi
